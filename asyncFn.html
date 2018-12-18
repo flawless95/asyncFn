@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <ul id="tagWrapper"></ul>
+  <input type="text" id="textInput">
+  <button id="addTagBtn">addTag</button>
+  <button id="removeTagBtn">removeTag</button>
+</body>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type='text/babel'>
+  const tagWrapper = document.getElementById('tagWrapper');
+  const textInput = document.getElementById('textInput');
+  const addTagBtn = document.getElementById('addTagBtn');
+  const removeTagBtn = document.getElementById('removeTagBtn');
+
+  let inputStr = ''
+
+  textInput.addEventListener('input', (value) => {
+    inputStr = textInput.value;
+  });
+
+  const checkPermission = (key) => {
+    return new Promise((res, rej) => {
+      setTimeout(() => {
+        console.log(`have recived ${key}`);
+        Math.random()*10 > 5 ? res({ permission: true }) : rej({ permission: false });
+      },300);
+    });
+  }
+
+  const addTagValidation = async (key) => {
+    if (!key) return false;
+    const checkedPermission = await checkPermission(key);
+    return checkedPermission.permission;
+  }
+
+  const addTagElement = (key) => {
+    const tagLi = document.createElement('li');
+    tagLi.innerText = key;
+    tagWrapper.appendChild(tagLi);
+  }
+
+  const addTag = (key) => {
+    addTagValidation(key)
+      .then((res) => {
+        addTagElement(key);
+        inputStr = '';
+        textInput.value = '';
+      })
+      .catch((res) => {
+        console.log('addTag error', res)
+      })
+  }
+
+
+  addTagBtn.addEventListener('click', () => {
+    addTag(inputStr)
+  })
+</script>
+</html>
